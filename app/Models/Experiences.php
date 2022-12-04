@@ -13,8 +13,13 @@ class Experiences extends Model
     protected $table='experiences';
     protected $fillable=['expert_id','Consulting'];
 
-    public function Expert()
+    public function expert()
     {
-        return $this->belongsTo(Expert::class);
+         return $this->belongsTo(Expert::class);
+    }
+
+    public function experts()
+    {
+        return $this->blongsToMany(Expert::class);
     }
 }

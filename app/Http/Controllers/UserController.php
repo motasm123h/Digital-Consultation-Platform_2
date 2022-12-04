@@ -6,33 +6,27 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Expert;
 use App\Models\TimeResrvation;
-use App\Models\Resrvation;
 use App\Models\Experiences;
 
 class UserController extends Controller
 {
 
     //4
-    public function expertANDexperience()
-    {
-        $experts=Expert::all();
-        if(count($experts)==0)
-            {
-             return response()->json([
-            'message'=>'Empty | Zero Expert',
-            ],201);
-            }
+    public function show_the_related_experts($consulting)
+    {   
+        $consultings=Experiences::where('Consulting',$consulting)->get();             
         return response()->json([
             'message'=>'done success',
-            'expert'=>$experts,
+            'consulting'=>$consultings,
+            'expert'=>$consultings->experts(),
         ],200);
+
     }
 
 
-    public function showexpert($id)
+    public function Specific_Expert($id)
     {
         $expert=Expert::find($id);
-        $time=TimeResrvation::where('expert_id',$expert->user_id)->get();
         if(!$expert)
             {
                 return response()->json([
@@ -44,8 +38,11 @@ class UserController extends Controller
                 return response()->json([
                     'message'=>'Mission Done Success',
                     'expert'=>$expert,
-                    'Timereservation' =>$time
+                    'Timereservation' =>$expert->TimeResrvation()->get(),
+                    'reservation' =>$expert->resrvation()->get()
                 ],200);
-            }    
+            } 
+
+
     }
 }
