@@ -17,7 +17,7 @@ class SearchController extends Controller
         if(count($experts) == 0)
         {
             return response()->json([
-                'message'=>'Sorry | We didnt find anything ',
+                'message'=>'Sorry | We did not find anything ',
             ]);
         }
         return response()->json([

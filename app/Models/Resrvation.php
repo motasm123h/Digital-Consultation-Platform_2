@@ -11,7 +11,7 @@ class Resrvation extends Model
     use HasFactory;
     protected $table='resrvations';
 
-    protected $fillable=['Day','Start_Res','End_Res','expert_id'];
+    protected $fillable=['day','start_resrv','end_resrv','user_id'];
 
     public function expert()
     {

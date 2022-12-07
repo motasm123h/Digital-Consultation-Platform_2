@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
+        //this is for store the resrvation to the doctor
         Schema::create('resrvations', function (Blueprint $table) {
             $table->id();
-            $table->integer('expert_id');
-            $table->integer('user_id');
-            $table->string('Day');
-            $table->timestamp('Start_Reservation');
+            $table->bigInteger('user_id');
+            $table->string('day');
+            $table->date('start_resrv');
+            $table->date('end_resrv');
+            $table->timestamps();
         });
     }
 

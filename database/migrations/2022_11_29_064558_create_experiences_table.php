@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('experiences', function (Blueprint $table) {
             $table->id();
-            $table->integer('expert_id');
-            $table->string('Consulting');
+            $table->integer('user_id');
+            $table->string('cons_type');
             $table->timestamps();
         });
     }

@@ -6,6 +6,7 @@ use App\Http\Controllers\ExpertController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SearchController;
+use Illuminate\Support\Carbon;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +18,10 @@ use App\Http\Controllers\SearchController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::get('test',function(){
+    return Carbon::now();
+});
+
 
 Route::post('register',[AuthController::class,'register']);
 Route::post('login',[AuthController::class,'login']);
@@ -47,5 +52,6 @@ Route::middleware('auth:sanctum','CheckUser')->delete('Experience/delete/{id}',[
 
 
 
-Route::middleware('auth:sanctum')->get('UserView/{consulting}',[UserController::class,'show_the_related_experts']);
+Route::middleware('auth:sanctum')->get('UserView/{keys}',[UserController::class,'show_the_related_experts']);
 Route::middleware('auth:sanctum','CheckExpert')->get('show/{id}', [UserController::class,'Specific_Expert']);
+Route::get('showResul/{id}', [UserController::class,'make_resrvation']);

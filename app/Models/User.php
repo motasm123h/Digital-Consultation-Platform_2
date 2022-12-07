@@ -48,18 +48,26 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-//        public function user()
-//    {
-//     return $this->belongsTo(User::class);
-//    }
-
-//     public function resrvation()
-//     {
-//         return $this->hasMany(Resrvation::class);
-//     } 
+    public function resrvation()
+    {
+        return $this->hasMany(Resrvation::class);
+    } 
     
-//     public function TimeResrvation()
-//     {
-//         return $this->hasMany(TimeResrvation::class);
-//     }
+    public function TimeResrvation()
+    {
+        return $this->hasMany(TimeResrvation::class);
+    }
+
+    public function experience()
+    {
+        return $this->hasMany(Experiences::class);
+    }
+
+    public function expert()
+    {
+        return $this->hasMany(Expert::class);
+    }
+
+    
+
 }

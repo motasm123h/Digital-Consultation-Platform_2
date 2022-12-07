@@ -11,11 +11,11 @@ class Experiences extends Model
 {
     use HasFactory;
     protected $table='experiences';
-    protected $fillable=['expert_id','Consulting'];
+    protected $fillable=['user_id','cons_type'];
 
     public function expert()
     {
-         return $this->belongsTo(Expert::class);
+        return $this->belongsTo(User::class);
     }
 
     public function experts()

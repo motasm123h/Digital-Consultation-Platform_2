@@ -16,10 +16,10 @@ return new class extends Migration
         Schema::create('time_resrvations', function (Blueprint $table) {
             $table->id();
             $table->integer('expert_id');
-            $table->string('Day');
-            $table->string('strat_resrvation');
-            $table->string('end_resrvation');
-            $table->timestamps();
+            $table->integer('user_id');
+            $table->string('day');
+            $table->date('history');
+            $table->date('resv_date');
         });
     }
 

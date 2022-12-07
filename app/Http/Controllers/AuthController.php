@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -41,7 +42,7 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        if(!Auth::attemppt($atter))
+        if(!Auth::attempt($atter))
         {
             return response([
                 'message' => 'Inavild Crdenatail'
@@ -49,7 +50,7 @@ class AuthController extends Controller
         }
         return response([
             'user' => auth()->user(),
-            'token' =>auth()->user()->createToken('MyApp')->accessToken
+            'token' =>auth()->user()->createToken('secret')->plainTextToken
         ]);
     }
     
@@ -67,19 +68,15 @@ class AuthController extends Controller
             'user'=>auth()->user(),
         ],200);
     }
-
+    
     public function update(Request $request)
     {
         $atter=$request->validate([
             'name' =>'required|string',
         ]);
-        
-        $image=$this->saveImage($request->image,'posts');
         auth()->user()->update([
             'name'=>$atter['name'],
-            'image'=>$image
         ]);
-
         return response([
             'message'=>'updated successfully',
             'user'=>auth()->user(),

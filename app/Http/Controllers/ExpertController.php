@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Expert;
 use App\Models\TimeResrvation;
+use App\Models\Resrvation;
 use App\Models\Experiences;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Carbon;
 
 class ExpertController extends Controller
 {
@@ -19,7 +22,7 @@ class ExpertController extends Controller
     {
         $atter=$request->validate([
             'title'=>'required|string',
-            'phone'=>'required|numeric|digits:9',
+            'phone'=>'required|numeric|digits:10',
             'description'=>'required',
             //'image'=>'required|image|mimes:jpeg,png,gif,svg|max:2048'
         ]);
@@ -46,15 +49,15 @@ class ExpertController extends Controller
     public function ReservationTime(Request $request)
     {
         $atter=$request->validate([
-            'Day'=>'required:string',
-            'strat_resrvation'=>'required',
-            'end_resrvation'=>'required',
+            'day'=>'required:string',
+            'start_resrv'=>'required',
+            'end_resrv'=>'required',
         ]);
-        $TimeReservation=TimeResrvation::create([
-            'Day'=>$atter['Day'],
-            'strat_resrvation'=>$atter['strat_resrvation'],
-            'end_resrvation'=>$atter['end_resrvation'],
-            'expert_id'=>auth()->user()->id,
+        $TimeReservation=Resrvation::create([
+            'day'=>$atter['day'],
+            'start_resrv'=>Carbon::createFromFormat('H',$atter['start_resrv']),
+            'end_resrv'=>Carbon::createFromFormat('H',$atter['start_resrv']),
+            'user_id'=>auth()->user()->id,
         ]);
 
          return response()->json([
@@ -63,41 +66,60 @@ class ExpertController extends Controller
         ],200);
     }
 
-
-    
-
     //this is for the Experiences
 
+        
     public function Experience(Request $request)
     {
         //*//
+        $cons_array=[
+            '1'=>'Business Consulting',
+            '2'=>'Medical Consultations',
+            '3'=>'Career Consulting',
+            '4'=>'Psychological counseling ',
+            '5'=>'Family Counseling',
+        ];
         $atter=$request->validate([
-            'Consulting'=>'required',
+            'cons_type'=>'required',
         ]);
-        $consulting=Experiences::create([
-            'Consulting'=>$atter['Consulting'],
-            'expert_id'=>auth()->user()->id,
-        ]);
+        $input=$request->all();
 
+        $cons=$input['cons_type'];
+        foreach($cons as $con)
+        {
+        $key=array_search($con,$cons_array);
+        $consulting=Experiences::create([
+            'cons_type'=>$key,
+            'user_id'=>auth()->user()->id,
+        ]);
+        }
         return response()->json([
             'message'=>'mission done success',
-            'Consulting'=>$consulting, 
+            'Consulting'=>$consulting,
+            'cons'=>count($cons) 
         ],200);
     }
 
+
+    //this is to edit resrvation at the doctor
     public function EditTesrvationTime(Request $request,$id)
     {
         $atter=$request->validate([
-            'Day'=>'required',
-            'strat_resrvation'=>'required',
-            'end_resrvation'=>'required',
+            'day'=>'required',
+            'start_resrv'=>'required|date',
+            'end_resrv'=>'required|date',
         ]);
-        $resrvation=TimeResrvation::findOrFail($id);
-        
+        $resrvation=Resrvation::find($id);
+        if(!$resrvation)
+        {
+            return response()->json([
+                'message'=>'Sorry | there is no result'
+            ],201);
+        }
         $newRes=$resrvation->update([
-            'Day'=>$atter['Day'],
-            'start_resrvation'=>$atter['strat_resrvation'],
-            'end_resrvation'=>$atter['end_resrvation'], 
+            'day'=>$atter['day'],
+            'start_resrv'=>$atter['start_resrv'],
+            'end_resrv'=>$atter['end_resrv'], 
         ]);
 
         return response()->json([
@@ -108,35 +130,91 @@ class ExpertController extends Controller
     }
 
 
+    // this is to edit consulting
     public function EditExperience(Request $request,$id)
     {
+        $cons_array=[
+            '1'=>'Business Consulting',
+            '2'=>'Medical Consultations',
+            '3'=>'Career Consulting',
+            '4'=>'Psychological counseling ',
+            '5'=>'Family Counseling',
+        ];
+
         $atter=$request->validate([
-            'Consulting'=>'required',
-        ]);
-        $experience=Experience::findOrFail($id);
-        $newCons=$experience->update([
-            'Consulting'=>$atter['Consulting'],
+            'cons_type'=>'required',
         ]);
 
+        
+        $experience=Experience::find($id);
+
+        if(!$experience)
+        {
+            return response()->json([
+                'message'=>'Sorry | there is no result'
+            ],201);
+        }
+
+        $newCons=$experience->update([
+            'cons_type'=>$atter['cons_type'],
+        ]);
+        
+
+        $key=array_search($atter['cons_type'],$cons_array);
         return response()->json([
             'message'=>'success',
             'resrvation after edit ' => $newCons
         ]);
-
     }
 
+
+    //this is to delete resrvation
     public function DeleteTesrvationTime($id)
     {
-        $resrvation=TimeResrvation::findOrFail($id);
+        $resrvation=Resrvation::find($id);
+
+       if(!$resrvation)
+        {
+            return response()->json([
+                'message'=>'Sorry | there is no result'
+            ],201);
+        }
+        
+       if($resrvation->user_id != auth()->user()->id)
+        {
+            return response([
+                'message' => 'permission denied.',
+            ],403);
+        }
+
+
         return response()->json([
             'message' => 'deleted success',
             'result' => $resrvation->delete()
         ]);
     }
 
-     public function DeleteTExperience($id)
+
+    //this is to delete a consulting
+    public function DeleteTExperience($id)
     {
-        $consulting=Experience::findOrFail($id);
+        $consulting=Experiences::find($id);
+
+       if(!$consulting)
+        {
+            return response()->json([
+                'message'=>'Sorry | there is no result'
+            ],201);
+        }
+        
+       if($consulting->user_id != auth()->user()->id)
+        {
+            return response([
+                'message' => 'permission denied.',
+            ],403);
+        }
+
+
         return response()->json([
             'message' => 'deleted success',
             'result' => $consulting->delete()
@@ -147,13 +225,14 @@ class ExpertController extends Controller
 
     public function HomeExpert()
     {
-        $experts=Expert::find(auth()->user()->id);
+        $experts=User::find(auth()->user()->id);
         return response()->json([
             'message'=>'mission done success',
-            'Expert'=>$experts,
+            'public information'=>$experts,
             'timeresrvation'=>$experts->TimeResrvation()->get(),
             'rsrvation'=>$experts->resrvation()->get(),
-            'expert'=>$experts->experiences()->get() 
+            'expert'=>$experts->expert()->get(),
+            'experience'=>$experts->experience()->get(), 
         ],200);
     } 
 

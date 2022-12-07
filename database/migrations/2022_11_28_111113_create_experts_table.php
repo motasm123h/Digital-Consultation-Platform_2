@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::create('experts', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id');
+            $table->bigInteger('user_id');
             $table->string('name');
             $table->string('phone');
             $table->string('title');
-            $table->string('image')->default('one');
+            $table->string('image')->nullable();
             $table->string('description');
             $table->timestamps();
         });

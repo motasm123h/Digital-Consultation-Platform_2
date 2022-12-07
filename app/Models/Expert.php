@@ -21,21 +21,7 @@ class Expert extends Model
     return $this->belongsTo(User::class);
    }
 
-    public function experience()
-    {
-        return $this->hasMany(Experiences::class);
-    }
-
-    public function resrvation()
-    {
-        return $this->hasMany(Resrvation::class);
-    } 
-    
-    public function TimeResrvation()
-    {
-        return $this->hasMany(TimeResrvation::class);
-    }
-
+   
 
     public function experiences()
     {
