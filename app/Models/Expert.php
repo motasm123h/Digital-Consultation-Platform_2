@@ -14,7 +14,7 @@ class Expert extends Model
     use HasFactory;
 
     protected $table='experts';
-    protected  $fillable=['name','title','phone','description','user_id'];
+    protected  $fillable=['name','title','phone','description','user_id','image'];
    
    public function user()
    {

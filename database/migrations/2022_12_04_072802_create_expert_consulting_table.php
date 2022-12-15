@@ -14,12 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('expert_consulting', function (Blueprint $table) {
-        $table->unsignedBigInteger('expert_id');
-        $table->unsignedBigInteger('experience_id');
-
-        $table->foreign('expert_id')->references('id')->on('experts'); 
-        $table->foreign('experience_id')->references('id')->on('experiences');
-        
+        $table->id();
         });
     }
 

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Expert;
+use App\Models\datetime;
 use App\Models\TimeResrvation;
 use App\Models\Resrvation;
 use App\Models\Experiences;
@@ -24,20 +25,21 @@ class ExpertController extends Controller
             'title'=>'required|string',
             'phone'=>'required|numeric|digits:10',
             'description'=>'required',
-            //'image'=>'required|image|mimes:jpeg,png,gif,svg|max:2048'
+            'image'=>'required|image|mimes:jpg,png|max:2048'
         ]);
 
-      //  $imagename=Str::random(32).".".$request->image->getClientOriginalExtension();
+        $imgName = time().'-'.auth()->user()->name.'.'.$request->image->extension();
+        $ImagePath = $request->image->move(public_path('images'),$imgName);
+        
         $expert=Expert::create([
             'name'=>auth()->user()->name,
             'title'=>$atter['title'],
             'phone'=>$atter['phone'],
             'description'=>$atter['description'],
-        //    'image'=>$imagename,
+            'image'=>$imgName,
             'user_id'=>auth()->user()->id,
         ]);
 
-        // Storage::disk('public')->put($imagename,file_get_contents($request->image));
         return response()->json([
             'message'=>'Expert add success',
             'expert'=>$expert
@@ -46,20 +48,35 @@ class ExpertController extends Controller
 
 
     //this for the ReservationTime
-    public function ReservationTime(Request $request)
+    public function TimeSchedule(Request $request)
     {
         $atter=$request->validate([
             'day'=>'required:string',
             'start_resrv'=>'required',
             'end_resrv'=>'required',
         ]);
+        $start = Carbon::createFromFormat('Y-m-d H',$atter['start_resrv']);
+        $end = Carbon::createFromFormat('Y-m-d H',$atter['end_resrv']);
+        
+        //here i create the TimeSchedule
         $TimeReservation=Resrvation::create([
             'day'=>$atter['day'],
-            'start_resrv'=>Carbon::createFromFormat('H',$atter['start_resrv']),
-            'end_resrv'=>Carbon::createFromFormat('H',$atter['start_resrv']),
+            'start_resrv'=>$start,
+            'end_resrv'=>$end,
             'user_id'=>auth()->user()->id,
         ]);
 
+        //here i well splet the time in to hours
+         while($start->toTimeString() != $end->toTimeString() )
+         {
+            datetime::create([
+               'day' => $atter['day'],
+               'date' => $start,
+               'user_id' => auth()->user()->id,
+            ]);
+            $start->addHour();
+         }
+            
          return response()->json([
             'message'=>'TimeReservation add success',
             'expert'=>$TimeReservation,
@@ -76,14 +93,16 @@ class ExpertController extends Controller
             '1'=>'Business Consulting',
             '2'=>'Medical Consultations',
             '3'=>'Career Consulting',
-            '4'=>'Psychological counseling ',
+            '4'=>'Psychological counseling',
             '5'=>'Family Counseling',
         ];
+
+        //validate the consulting
         $atter=$request->validate([
             'cons_type'=>'required',
         ]);
-        $input=$request->all();
 
+        $input=$request->all();
         $cons=$input['cons_type'];
         foreach($cons as $con)
         {
@@ -93,6 +112,7 @@ class ExpertController extends Controller
             'user_id'=>auth()->user()->id,
         ]);
         }
+
         return response()->json([
             'message'=>'mission done success',
             'Consulting'=>$consulting,

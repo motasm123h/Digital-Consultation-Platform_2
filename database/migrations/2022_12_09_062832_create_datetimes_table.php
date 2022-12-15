@@ -13,11 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('time_resrvations', function (Blueprint $table) {
+        Schema::create('datetimes', function (Blueprint $table) {
             $table->id();
-            $table->integer('expert_id');
-            $table->integer('user_id');
-            $table->dateTime('resv_date');
+            $table->bigInteger('user_id');
+            $table->dateTime('date');
             $table->string('day');
             $table->timestamps();
         });
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('time_resrvations');
+        Schema::dropIfExists('datetimes');
     }
 };

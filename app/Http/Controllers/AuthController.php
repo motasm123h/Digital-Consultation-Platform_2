@@ -17,7 +17,7 @@ class AuthController extends Controller
             [
                 'name'=>'required|string',
                 'email' => 'required|email|unique:users,email',
-                'password'=>'required|min:6|confirmed',
+                'password'=>'required|min:8',
                 'acc_type' =>'string'
             ]);
         $user=User::create([
@@ -81,5 +81,10 @@ class AuthController extends Controller
             'message'=>'updated successfully',
             'user'=>auth()->user(),
         ],200);
+    }
+
+    public function reg(Reuest $req)
+    {
+        dd('here');
     }
 }

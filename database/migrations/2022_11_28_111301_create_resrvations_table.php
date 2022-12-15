@@ -17,9 +17,9 @@ return new class extends Migration
         Schema::create('resrvations', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id');
+            $table->dateTime('start_resrv');
+            $table->dateTime('end_resrv');
             $table->string('day');
-            $table->date('start_resrv');
-            $table->date('end_resrv');
             $table->timestamps();
         });
     }

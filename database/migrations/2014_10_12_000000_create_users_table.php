@@ -20,6 +20,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('acc_type');
+            $table->integer('acc_balanced')->default(100000);
             $table->rememberToken();
             $table->timestamps();
         });

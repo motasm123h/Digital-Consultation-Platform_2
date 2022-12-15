@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 use App\Models\Expert;
+use App\Models\datetime;
 use App\Models\TimeResrvation;
 use App\Models\Resrvation;
 use App\Models\Experiences;
@@ -26,7 +27,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'acc_type'
+        'acc_type',
+        'acc_balanced'
     ];
 
     /**
@@ -67,6 +69,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Expert::class);
     }
+
+    public function datetime()
+    {
+        return $this->hasMany(datetime::class);
+    }
+
 
     
 
