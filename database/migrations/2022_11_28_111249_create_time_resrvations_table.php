@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('time_resrvations', function (Blueprint $table) {
             $table->id();
+            $table->string('expert_name');
             $table->integer('expert_id');
             $table->integer('user_id');
             $table->dateTime('resv_date');

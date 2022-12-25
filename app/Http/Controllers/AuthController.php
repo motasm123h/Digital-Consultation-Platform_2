@@ -66,6 +66,7 @@ class AuthController extends Controller
     {
         return response([
             'user'=>auth()->user(),
+            'timereservation'=>auth()->user()->TimeResrvation()->get(),
         ],200);
     }
     

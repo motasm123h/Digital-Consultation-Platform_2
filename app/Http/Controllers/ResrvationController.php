@@ -7,16 +7,21 @@ use App\Models\datetime;
 use App\Models\TimeResrvation;
 
 use App\Models\User;
+use App\Models\Expert;
 use Illuminate\Support\Carbon;
 
 class ResrvationController extends Controller
 {
-    public static function date($user_id)
-    {
-        
-        $dates=datetime::all()->where('user_id',$user_id);
+    public static function early_date($user_id)
+    {       
+        $dates=datetime::orderBy('date','asc')->where('user_id',$user_id)->take('4')->get();
         return $dates;
+    }
 
+    public static function late_date($user_id)
+    {
+        $dates=datetime::orderBy('date','desc')->where('user_id',$user_id)->take('4')->get();
+        return $dates;   
     }
 
     public function make_resrvation(Request $request ,$id)
@@ -28,17 +33,7 @@ class ResrvationController extends Controller
         
         $date=Carbon::createFromFormat('Y-m-d H',$atter['resv_date']);
         
-        //here the reservation for ever expert
-        $timeResrvation=TimeResrvation::create([
-        'resv_date'=>$date,
-        'day'=>$atter['day'],
-        'user_id'=>auth()->user()->id,
-        'expert_id'=>$id
-        ]);
-
-
-
-        //here we update the time reservation for the next week
+        //first , we should check if the time is in the expert Timetable
         $new_date=datetime::where([
             ['user_id','=', $id],
             ['date','=',$date],
@@ -48,10 +43,22 @@ class ResrvationController extends Controller
         if(!$new_date)
         {
             return response()->json([
-                'message'=>'invaild operation',
+                'message'=>'invaild operation ',
             ]);
         }
 
+        $expert=Expert::where('user_id','=',$id)->first();
+        //here the reservation for ever expert
+        $timeResrvation=TimeResrvation::create([
+        'expert_name'=>$expert['name'],
+        'resv_date'=>$date,
+        'day'=>$atter['day'],
+        'user_id'=>auth()->user()->id,
+        'expert_id'=>$id
+        ]);
+
+
+        //here we update the time reservation for the next week        
         $test=$new_date->update([
             'date'=>$date->addWeek()
         ]);

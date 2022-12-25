@@ -55,8 +55,8 @@ class ExpertController extends Controller
             'start_resrv'=>'required',
             'end_resrv'=>'required',
         ]);
-        $start = Carbon::createFromFormat('Y-m-d H',$atter['start_resrv']);
-        $end = Carbon::createFromFormat('Y-m-d H',$atter['end_resrv']);
+        $start = Carbon::createFromFormat('H',$atter['start_resrv']);
+        $end = Carbon::createFromFormat('H',$atter['end_resrv']);
         
         //here i create the TimeSchedule
         $TimeReservation=Resrvation::create([
@@ -90,11 +90,11 @@ class ExpertController extends Controller
     {
         //*//
         $cons_array=[
-            '1'=>'Business Consulting',
-            '2'=>'Medical Consultations',
-            '3'=>'Career Consulting',
-            '4'=>'Psychological counseling',
-            '5'=>'Family Counseling',
+            '1'=>'Business',
+            '2'=>'Medical',
+            '3'=>'Career',
+            '4'=>'Psychological',
+            '5'=>'Family',
         ];
 
         //validate the consulting
@@ -153,34 +153,40 @@ class ExpertController extends Controller
     // this is to edit consulting
     public function EditExperience(Request $request,$id)
     {
+
+        $input=$request->all();
+        $cons=$input['cons_type'];
+
+
         $cons_array=[
-            '1'=>'Business Consulting',
-            '2'=>'Medical Consultations',
-            '3'=>'Career Consulting',
-            '4'=>'Psychological counseling ',
-            '5'=>'Family Counseling',
+            '1'=>'Business',
+            '2'=>'Medical',
+            '3'=>'Career',
+            '4'=>'Psychological',
+            '5'=>'Family',
         ];
 
         $atter=$request->validate([
             'cons_type'=>'required',
         ]);
-
+    
+        $experience=Experiences::find($id);
         
-        $experience=Experience::find($id);
-
         if(!$experience)
         {
             return response()->json([
-                'message'=>'Sorry | there is no result'
-            ],201);
+                'message'=>'Sorry | there is no result',
+               ],201);
         }
-
+     
+        foreach($cons as $con)
+        {
+        $key=array_search($con,$cons_array);
         $newCons=$experience->update([
-            'cons_type'=>$atter['cons_type'],
+            'cons_type'=>$key,
         ]);
-        
-
-        $key=array_search($atter['cons_type'],$cons_array);
+        }
+                        
         return response()->json([
             'message'=>'success',
             'resrvation after edit ' => $newCons
@@ -233,27 +239,45 @@ class ExpertController extends Controller
                 'message' => 'permission denied.',
             ],403);
         }
-
-
+        
         return response()->json([
             'message' => 'deleted success',
             'result' => $consulting->delete()
         ]);
     }
-    
-
 
     public function HomeExpert()
     {
-        $experts=User::find(auth()->user()->id);
+        $cons_array=[
+            'Business'=>'1',
+            'Medical'=>'2',
+            'Career'=>'3',
+            'Psychological'=>'4',
+            'Family'=>'5',
+        ];
+        $expert=User::find(auth()->user()->id);
+        
+        if(!$expert)
+        {
+            return response()->json([
+                'message' => 'Sorry | you should login first',
+            ],201);
+        }
+        $expert_cons = [];
+        $cons = $expert->experience()->get(); 
+        foreach($cons as $key => $con)
+        {
+            $cons_type = $con['cons_type'];
+            $key=array_search($cons_type,$cons_array);
+            $expert_cons[$key] = $key;            
+        }
+    
         return response()->json([
             'message'=>'mission done success',
-            'public information'=>$experts,
-            'timeresrvation'=>$experts->TimeResrvation()->get(),
-            'rsrvation'=>$experts->resrvation()->get(),
-            'expert'=>$experts->expert()->get(),
-            'experience'=>$experts->experience()->get(), 
+            'public information'=>$expert,
+            'expert'=>$expert->expert()->first(),
+            'cons'=>$expert_cons,
+            'timeresrvation'=>$expert->TimeResrvation()->get(),
         ],200);
     } 
-
 }

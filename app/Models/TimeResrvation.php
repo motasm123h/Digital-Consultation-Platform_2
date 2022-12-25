@@ -13,7 +13,7 @@ class TimeResrvation extends Model
     use HasFactory;
     protected $table='time_resrvations';
     
-    protected $fillable=['day','resv_date','user_id','expert_id'];
+    protected $fillable=['expert_name','day','resv_date','user_id','expert_id'];
 
     public function expert()
     {

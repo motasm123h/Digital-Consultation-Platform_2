@@ -49,23 +49,26 @@ class UserController extends Controller
             ['acc_type','=','E']
         ])->first();
 
-        $info = Expert::where('user_id','=',$id)->get();
-        $info[0]->image = '/images/'.$info[0]->image;
-        $dates = ResrvationController::date($id);
         if($expert == null)
         {
             return response()->json([
-                'message'=>'Mission canceled'
+                'message'=>'this page is empty | sorry'
             ],201);
         }
+        $info = Expert::where('user_id','=',$id)->get();
+
+        $info[0]->image = '/images/'.$info[0]->image;
+        $early_dates = ResrvationController::early_date($id);
+        $late_dates = ResrvationController::late_date($id);
         
         return response([
             'message'=>'Mission Done Success',
             'expert'=>$expert,
-            'information' => $info,
             'Timereservation' =>$expert->TimeResrvation()->get(),
             'reservation' =>$expert->resrvation()->get(),
-            'dates'=>$dates,
+            'information' => $info,
+            'Early dates'=>$early_dates,
+            'Late date' =>$late_dates,
         ],200);
         
     }
