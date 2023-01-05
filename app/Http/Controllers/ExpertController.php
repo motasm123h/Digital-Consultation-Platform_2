@@ -122,32 +122,32 @@ class ExpertController extends Controller
 
 
     //this is to edit resrvation at the doctor
-    public function EditTesrvationTime(Request $request,$id)
-    {
-        $atter=$request->validate([
-            'day'=>'required',
-            'start_resrv'=>'required|date',
-            'end_resrv'=>'required|date',
-        ]);
-        $resrvation=Resrvation::find($id);
-        if(!$resrvation)
-        {
-            return response()->json([
-                'message'=>'Sorry | there is no result'
-            ],201);
-        }
-        $newRes=$resrvation->update([
-            'day'=>$atter['day'],
-            'start_resrv'=>$atter['start_resrv'],
-            'end_resrv'=>$atter['end_resrv'], 
-        ]);
+    // public function EditTesrvationTime(Request $request,$id)
+    // {
+    //     $atter=$request->validate([
+    //         'day'=>'required',
+    //         'start_resrv'=>'required|date',
+    //         'end_resrv'=>'required|date',
+    //     ]);
+    //     $resrvation=Resrvation::find($id);
+    //     if(!$resrvation)
+    //     {
+    //         return response()->json([
+    //             'message'=>'Sorry | there is no result'
+    //         ],201);
+    //     }
+    //     $newRes=$resrvation->update([
+    //         'day'=>$atter['day'],
+    //         'start_resrv'=>$atter['start_resrv'],
+    //         'end_resrv'=>$atter['end_resrv'], 
+    //     ]);
 
-        return response()->json([
-            'message'=>'success',
-            'resrvation after edit ' => $newRes
-        ]);
+    //     return response()->json([
+    //         'message'=>'success',
+    //         'resrvation after edit ' => $newRes
+    //     ]);
 
-    }
+    // }
 
 
     // this is to edit consulting
@@ -256,7 +256,7 @@ class ExpertController extends Controller
             'Family'=>'5',
         ];
         $expert=User::find(auth()->user()->id);
-        
+
         if(!$expert)
         {
             return response()->json([
@@ -278,6 +278,7 @@ class ExpertController extends Controller
             'expert'=>$expert->expert()->first(),
             'cons'=>$expert_cons,
             'timeresrvation'=>$expert->TimeResrvation()->get(),
+            'Reservation'=>$expert->resrvation()->get(),
         ],200);
     } 
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ResrvationController;
+use App\Http\Controllers\RatingController;
 
 
 
@@ -40,8 +41,10 @@ Route::get('search/{type}', [SearchController::class,'search']);
 
         //this block is for user Permissions
         Route::middleware(['CheckExpert'])->group(function(){
+        Route::post('show/{id}/make_dates', [ResrvationController::class,'make_resrvation']);
+        Route::post('show/{id}/make_rating',[RatingController::class,'make_rating']);
+        
         Route::get('UserView/{keys}',[UserController::class,'show_the_related_experts']);
         Route::get('show/{id}', [UserController::class,'Specific_Expert']);
-        Route::post('show/{id}/make_dates', [ResrvationController::class,'make_resrvation']);
         });
 });

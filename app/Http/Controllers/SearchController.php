@@ -27,10 +27,29 @@ class SearchController extends Controller
         $key=array_search($type,$cons_array);
         //search by the Expert name
         
-        $experts=Expert::where('name','like','%'.$type.'%')->get();
+        
+        
         //search by the cons_type
         $cons=Experiences::where('cons_type',$key)->get();
         
+         //if the user search on a exerts
+        if(count($cons)==0)
+        {
+        return response()->json([
+            'message' => 'Result found success',
+            'expert' => User::where([
+                    ['name','like','%'.$type.'%'],
+                    ['acc_type','=','E']
+                                   ])->get(),
+        ],200);
+        }
+
+        $experts=User::where([
+            ['name','like','%'.$type.'%'],
+            ['acc_type','=','E']
+            ])->get();   
+
+
         //if there is no result
         if(count($experts) == 0 && count($cons)==0)
         {
@@ -39,16 +58,8 @@ class SearchController extends Controller
             ]);
         }
 
-        //if the user search on a exerts
-        else if(count($cons)==0)
+        foreach($cons as $key => $con)
         {
-        return response()->json([
-            'message' => 'Result found success',
-            'expert' => $experts,
-        ],200);
-        }
-        
-        foreach($cons as $key => $con){
             $experts[$key] = User::where([
                 ['acc_type','=','E'],
                 ['id','=',$con->user_id],
