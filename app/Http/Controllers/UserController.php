@@ -23,11 +23,6 @@ class UserController extends Controller
         $cons = Experiences::where('cons_type','=',$keys)->get();
         $experts = [];
         $information = [];
-        $timeResrvation = [];
-        $late_dates = [];
-        $early_dates = [];
-        $all = [];
-        $reating = [];
         
         foreach($cons as $key => $con){
 
@@ -41,27 +36,11 @@ class UserController extends Controller
         $information[$key]=Expert::where([
             ['user_id','=', $con->user_id]
         ])->get();
-
-        //here to show the early dates
-        $early_dates[$key] = ResrvationController::early_date($con->user_id);
-        
-        //here to show the lates dates
-        $late_dates[$key] = ResrvationController::late_date($con->user_id);
-
-        //$timeResrvation[$key]=$experts[$key]->resrvation()->get();
-        $timeResrvation[$key]=Resrvation::where([
-            ['user_id','=',$con->user_id],
-        ]);
-
-        //here i merege the all user
-        $all[$key]=Arr::collapse([$experts[$key],$information[$key],[$early_dates[$key]]]);
-        
         }
 
         return response()->json([
-            'message'=>'done success',
-            //'experts'=>$information,
-            'user'=>$all,         
+            'message'=>'done success',         
+            'experts'=>$information,
         ],200);
 
     }
