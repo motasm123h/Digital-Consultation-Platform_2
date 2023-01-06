@@ -53,7 +53,7 @@ class UserController extends Controller
         $expert = User::where([
             ['id','=',$id],
             ['acc_type','=','E']
-                             ])->first();
+                 ])->first();
 
         if($expert == null)
         {
@@ -66,7 +66,9 @@ class UserController extends Controller
         $rating=Rating::where('user_id','=',$id)->get();
 
         $info[0]->image = '/images/'.$info[0]->image;
-
+        //this is date
+        $early_dates = ResrvationController::early_date($id);
+        $late_dates = ResrvationController::late_date($id);
         
         return response([
             'message'=>'Mission Done Success',

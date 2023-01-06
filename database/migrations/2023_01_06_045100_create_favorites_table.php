@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('user_id');
             $table->bigInteger('expert_id');
+            $table->integer('FavOrNot')->default(0);
             $table->timestamps();
         });
     }

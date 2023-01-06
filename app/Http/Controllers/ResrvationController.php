@@ -30,7 +30,7 @@ class ResrvationController extends Controller
             'resv_date'=>'required',
             'day'=>'required',
         ]);
-        
+  
         $date=Carbon::createFromFormat('Y-m-d H',$atter['resv_date']);
         
         //first , we should check if the time is in the expert Timetable
